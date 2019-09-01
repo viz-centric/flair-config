@@ -1,0 +1,29 @@
+spring:
+  profiles:
+    active: dev
+    
+server:
+  port: 9090
+    
+eureka:
+  instance:
+    health-check-url-path: /health
+    status-page-url-path: /info
+    nonSecurePort: ${server.port}
+    securePort: ${server.port}
+    securePortEnabled: false
+  client:
+    enabled: true
+    healthcheck.enabled: true
+    securePortEnabled: false
+
+management:
+  endpoint.prometheus.enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - prometheus
+      base-path: "/"

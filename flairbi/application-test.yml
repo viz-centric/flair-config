@@ -1,0 +1,148 @@
+# ===================================================================
+# Spring Boot configuration for the "dev" profile.
+#
+# This configuration overrides the application.yml file.
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# ===================================================================
+spring:
+    profiles:
+        active: test
+        include: swagger
+    devtools:
+        restart:
+            enabled: true
+        livereload:
+            enabled: false # we use gulp + BrowserSync for livereload
+    jackson:
+        serialization.indent_output: true
+    datasource:
+        type: com.zaxxer.hikari.HikariDataSource
+        url: jdbc:postgresql://localhost:5434/flairbi
+        name:
+        username: postgres
+        password: admin
+    jpa:
+        database-platform: com.flair.bi.domain.util.FixedPostgreSQL82Dialect
+        database: POSTGRESQL
+        show-sql: true
+        properties:
+            hibernate.cache.use_second_level_cache: false
+            hibernate.cache.use_query_cache: false
+            hibernate.generate_statistics: true
+    mail:
+        host: localhost
+        port: 25
+        username:
+        password:
+    messages:
+        cache-seconds: 1
+    thymeleaf:
+        cache: false
+
+liquibase:
+    contexts: test
+    drop-first: true
+
+server:
+    port: 80
+    ssl:
+      key-store: classpath:ssl/keystore/flairbi-keystore.p12
+      key-alias: flairbi
+      key-store-password: changeit
+      key-store-type: PKCS12
+      key-password: changeit
+      trust-store: classpath:ssl/keystore/flairbi-truststore.p12
+      trust-store-type: PKCS12
+      trust-store-password: changeit
+      enabled: false
+      enabled-protocols: [TLSv1.1, TLSv1.2]
+
+security:
+    oauth2:
+        client:
+            # From OIDC app
+            clientId: 7GqI8NjQ9zqwyoO7X7K6
+            clientSecret: WbYFC6FGM3k60ir1MdD2iUJVWeWL2MhzW0wzih5E
+            # From Authorization Server's metadata
+            accessTokenUri: https://dev-225369.oktapreview.com/oauth2/ausajk9wyqX8XfNuc0h7/v1/token
+            userAuthorizationUri: https://dev-225369.oktapreview.com/oauth2/ausajk9wyqX8XfNuc0h7/v1/authorize
+            clientAuthenticationScheme: form
+            scope: openid profile email
+        resource:
+            # from your Auth Server's metadata, check .well-known/openid-configuration
+            # if not in .well-known/oauth-authorization-server
+            userInfoUri: https://dev-225369.oktapreview.com/oauth2/ausajk9wyqX8XfNuc0h7/v1/userinfo
+            preferTokenInfo: false
+
+# ===================================================================
+# JHipster specific properties
+# ===================================================================
+
+jhipster:
+    security:
+        rememberMe:
+            # security key (this key should be unique for your application, and kept secret)
+            key: 81703cb4a1c3099ecc374a94c5c4efe0717e078b
+    mail: # specific JHipster mail property, for standard properties see MailProperties
+        from: flairbi@localhost
+        baseUrl: http://127.0.0.1:80
+    metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
+        jmx.enabled: true
+        graphite:
+            enabled: false
+            host: localhost
+            port: 2003
+            prefix: flairbi
+        prometheus:
+            enabled: false
+            endpoint: /prometheusMetrics
+        logs: # Reports Dropwizard metrics in the logs
+            enabled: false
+            reportFrequency: 60 # in seconds
+    logging:
+        logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration
+            enabled: false
+            host: localhost
+            port: 5000
+            queueSize: 512
+# ===================================================================
+# Ldap connection properties
+# ===================================================================
+    ldapsettings:
+        url: ldap://localhost:10389
+        base: dc=hawk,dc=com
+        userDn: uid=admin,ou=system
+        password: secret
+
+# ===================================================================
+# Application specific properties
+# ===================================================================
+application:
+    fbi-engine:
+        authentication:
+            pki:
+                key-store: classpath:ssl/keystore/flairbi-keystore.p12
+                key-store-password: changeit
+                key-password: changeit
+                trust-store: classpath:ssl/keystore/flairbi-truststore.p12
+                trust-store-password: changeit
+                enabled: true
+            basic-authentication:
+                enabled: false
+                username: admin
+                password: admin
+logging:
+  level:
+    org.hibernate.stat: DEBUG
+couchdb:
+  password: password
+  username: admin
+  host: localhost
+  port: 5980
+  test-connection-at-startup: false
+  database-name: flairbi-view

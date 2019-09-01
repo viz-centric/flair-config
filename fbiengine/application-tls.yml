@@ -1,0 +1,12 @@
+server:
+  ssl:
+    enabled: true
+    key-store: classpath:ssl/keystore/fbiengine-keystore.p12
+    key-store-password: changeit
+    key-alias: fbiengine
+    key-password: changeit
+    trust-store: classpath:ssl/keystore/fbiengine-truststore.p12
+    trust-store-type: pkcs12
+    key-store-type: pkcs12
+    trust-store-password: changeit
+    enabled-protocols: [TLSv1.1, TLSv1.2]

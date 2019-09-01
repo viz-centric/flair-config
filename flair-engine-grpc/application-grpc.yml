@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: flair-engine-grpc
+
+grpc:
+  port: 6565
+  tls:
+    enabled: ${GRPC_SSL_ENABLED:false}
+    certificate: server.crt
+    key: server.pem

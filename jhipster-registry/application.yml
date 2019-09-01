@@ -1,0 +1,13 @@
+# ===================================================================
+# JHipster Sample Spring Cloud Config.
+# ===================================================================
+
+# Property used on app startup to check the config server status
+configserver:
+  name: JHipster Registry config server
+  status: Connected to the JHipster Registry config server!
+
+# Enable /management/logfile endpoint for all apps
+logging:
+  path: /app/logs
+  file: ${spring.application.name}.log
