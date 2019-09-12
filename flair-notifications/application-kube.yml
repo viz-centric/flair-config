@@ -2,9 +2,11 @@ port: 8080
 imageFolder: ./images/
 grpcEndPoint: flair-engine:6565
 mailService:
-    serive: gmail
+    serive: sendgrid
     sender: admin-vizcentric@gmail.com
     testUser: admin@vizcentric.com
+    host: smtp.sendgrid.net
+    port: 587
     auth :
-      user: vizcentric.smtp@gmail.com
-      pass:
+      user: <key name>
+      pass: <password>
