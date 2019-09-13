@@ -1,5 +1,5 @@
 port: 8080
-imageFolder: ./images/
+imageFolder: /flair-notifications/images
 grpcEndPoint: flair-engine:6565
 mailService:
     serive: sendgrid
