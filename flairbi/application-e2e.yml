@@ -92,8 +92,8 @@ jhipster:
       port: 2003
       prefix: flairbi
     prometheus:
-      enabled: false
-      endpoint: /prometheusMetrics
+      enabled: true
+      endpoint: /prometheus
     logs: # Reports Dropwizard metrics in the logs
       enabled: false
       reportFrequency: 60 # in seconds
@@ -174,7 +174,7 @@ MAX_TEXT_MESSAGE_SIZE : 2048000
 
 flair-notifications:
   host: http://flair-notifications
-  port: 8080
+  port: 8090
   username: admin
   password: admin
   auth-url : /api-token-auth/
@@ -190,6 +190,7 @@ flair-notifications:
   scheduled-report-param-url: /api/jobSchedule/?visualizationid={visualizationid}
   scheduled-execute-now-report-param-url: /api/executeImmediate/?visualizationid={visualizationid}
   scheduled-report-logs-param-url: /api/jobLogs/?visualizationid={visualizationid}&pageSize={pageSize}&page={page}
+  scheduled-search-reports-param-url: /api/jobFilter/?userName={userName}&reportName={reportName}&startDate={startDate}&endDate={endDate}&pageSize={pageSize}&page={page}
 
 # ===================================================================
 # files location
