@@ -1,0 +1,6 @@
+eureka:
+    instance:
+        appname: fbiengine
+        instanceId: fbiengine:${spring.application.instance-id:${random.value}}
+        nonSecurePort: ${server.port}
+

@@ -1,0 +1,13 @@
+grpc:
+  port: 6565
+  tls:
+    enabled: ${GRPC_SSL_ENABLED:false}
+    certificate: server.crt
+    key: server.pem
+
+eureka:
+    instance:
+        nonSecurePort: ${grpc.port}
+        securePort: ${grpc.port}
+        securePortEnabled: true
+
