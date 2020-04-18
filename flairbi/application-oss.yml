@@ -46,7 +46,6 @@ spring:
 
 liquibase:
   contexts: dev,
-  drop-first: false
 
 server:
   port: 8002
