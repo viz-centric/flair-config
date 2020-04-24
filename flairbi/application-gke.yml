@@ -136,7 +136,7 @@ logging:
 couchdb:
   password: ${COUCHDB_PASSWORD}
   username: ${COUCHDB_USERNAME}
-  url: ${COUCHDB_URI}
+  url: http://${COUCHDB_URI}
   test-connection-at-startup: false
   database-name: flairbi-view
   ssl-factory: com.flair.bi.ssl.FlairBIPgSqlSSLSocketFactory
