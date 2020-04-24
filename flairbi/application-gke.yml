@@ -134,9 +134,9 @@ logging:
   level:
     org.hibernate.stat: DEBUG
 couchdb:
-  password: password
-  username: admin
-  url: http://flair-couchdb-svc-couchdb:5984
+  password: ${COUCHDB_PASSWORD}
+  username: ${COUCHDB_USERNAME}
+  url: ${COUCHDB_URI}
   test-connection-at-startup: false
   database-name: flairbi-view
   ssl-factory: com.flair.bi.ssl.FlairBIPgSqlSSLSocketFactory
