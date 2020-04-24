@@ -26,9 +26,9 @@ spring:
     serialization.indent_output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://10.123.96.3:5432/flairengine?ssl=false
-    username: postgres
-    password: admin
+    url: jdbc:postgresql://${POSTGRES_URI}/flairengine?ssl=false
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
   jpa:
     database: POSTGRESQL
     show-sql: true
