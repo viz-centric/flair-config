@@ -1,0 +1,12 @@
+port: 8080
+imageFolder: /flair-notifications/images
+grpcEndPoint: flair-engine:6565
+mailService:
+    serive: sendgrid
+    sender: admin-vizcentric@gmail.com
+    testUser: admin@vizcentric.com
+    host: smtp.sendgrid.net
+    port: 587
+    auth :
+      user: <key name>
+      pass: <password>
