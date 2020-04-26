@@ -50,6 +50,7 @@ liquibase:
 
 server:
   port: 8002
+  use-forward-headers: true
 security:
   oauth2:
     client:
