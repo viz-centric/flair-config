@@ -153,4 +153,6 @@ application:
           - "ROLE_USER"
 
 flair-cache:
+  url: ${FLAIR_CACHE}
   enabled: true
+  
