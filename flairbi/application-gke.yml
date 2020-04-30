@@ -200,7 +200,7 @@ storage-data-files: storage/data/files/
 
 data-file-max-size-mb: 10
 
-flair-engine:
-  url: ${FLAIR_ENGINE}
-flair-notifications:
-  url: ${FLAIR_NOTIFICATIONS}
+# flair-engine:
+#   url: ${FLAIR_ENGINE}
+# flair-notifications:
+#   url: ${FLAIR_NOTIFICATIONS}
