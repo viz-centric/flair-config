@@ -12,7 +12,6 @@ ssl:
   serverCert: certs/certChainFile.crt
   serverKey: certs/privateKeyFile.key
 mailService:
-  serive: sendgrid
   sender: admin-vizcentric@gmail.com
   testUser: admin@vizcentric.com
   host: smtp.sendgrid.net
