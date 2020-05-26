@@ -46,7 +46,6 @@ spring:
 
 liquibase:
   contexts: dev,
-  drop-first: false
 
 server:
   port: 8002
@@ -54,17 +53,17 @@ security:
   oauth2:
     client:
       # From OIDC app
-      clientId: 7GqI8NjQ9zqwyoO7X7K6
-      clientSecret: WbYFC6FGM3k60ir1MdD2iUJVWeWL2MhzW0wzih5E
+      clientId: ${OAUTH_CLIENT_ID}
+      clientSecret: ${OAUTH_CLIENT_SECRET}
       # From Authorization Server's metadata
-      accessTokenUri: https://dev-225369.oktapreview.com/oauth2/ausajk9wyqX8XfNuc0h7/v1/token
-      userAuthorizationUri: https://dev-225369.oktapreview.com/oauth2/ausajk9wyqX8XfNuc0h7/v1/authorize
+      accessTokenUri: ${OAUTH_ACCESS_TOKEN_URI}
+      userAuthorizationUri: ${OAUTH_USER_AUTHORIZATION_URI}
       clientAuthenticationScheme: form
       scope: openid profile email
     resource:
       # from your Auth Server's metadata, check .well-known/openid-configuration
       # if not in .well-known/oauth-authorization-server
-      userInfoUri: https://dev-225369.oktapreview.com/oauth2/ausajk9wyqX8XfNuc0h7/v1/userinfo
+      userInfoUri: ${OAUTH_USER_INFO_URI}
       preferTokenInfo: false
 # ===================================================================
 # JHipster specific properties

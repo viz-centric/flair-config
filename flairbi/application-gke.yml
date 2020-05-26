@@ -1,5 +1,5 @@
 # ===================================================================
-# Spring Boot configuration for the "prod" profile.
+# Spring Boot configuration for the "dev" profile.
 #
 # This configuration overrides the application.yml file.
 # ===================================================================
@@ -9,44 +9,48 @@
 # Full reference is available at:
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
-
 spring:
+  profiles:
+    active: dev
+    include: swagger
   devtools:
     restart:
       enabled: false
     livereload:
-      enabled: false
+      enabled: false # we use gulp + BrowserSync for livereload
+  jackson:
+    serialization.indent_output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    #        url: jdbc:postgresql://localhost:5432/flairbissl=true&sslfactory=com.flair.bi.ssl.FlairBIPgSqlSSLSocketFactory&sslfactoryarg=src/main/resources/config/ssl/ssl-prod.properties
     url: jdbc:postgresql://${POSTGRES_URI}/flairbi?ssl=false
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASS}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
   jpa:
     database-platform: com.flair.bi.domain.util.FixedPostgreSQL82Dialect
     database: POSTGRESQL
-    show-sql: false
+    show-sql: true
     properties:
       hibernate.cache.use_second_level_cache: false
       hibernate.cache.use_query_cache: false
-      hibernate.generate_statistics: false
+      hibernate.generate_statistics: true
+
   mail:
-    host: localhost
+    host: fakesmtp
     port: 25
     username:
     password:
+  messages:
+    cache-seconds: 1
   thymeleaf:
-    cache: true
+    cache: false
 
 liquibase:
-  contexts: prod
+  contexts: dev,
+  drop-first: false
 
 server:
   port: 8002
-  compression:
-    enabled: true
-    mime-types: text/html,text/xml,text/plain,text/css, application/javascript, application/json
-    min-response-size: 1024
+  use-forward-headers: true
 security:
   oauth2:
     client:
@@ -68,9 +72,6 @@ security:
 # ===================================================================
 
 jhipster:
-  http:
-    cache: # Used by the CachingHttpHeadersFilter
-      timeToLiveInDays: 1461
   security:
     authentication:
       jwt:
@@ -83,7 +84,7 @@ jhipster:
       key: 81703cb4a1c3099ecc374a94c5c4efe0717e078b
   mail: # specific JHipster mail property, for standard properties see MailProperties
     from: flairbi@localhost
-    baseUrl: http://my-server-url-to-change # Modify according to your server's URL
+    baseUrl: http://localhost:8002
   metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
     jmx.enabled: true
     graphite:
@@ -92,8 +93,8 @@ jhipster:
       port: 2003
       prefix: flairbi
     prometheus:
-      enabled: false
-      endpoint: /prometheusMetrics
+      enabled: true
+      endpoint: /prometheus
     logs: # Reports Dropwizard metrics in the logs
       enabled: false
       reportFrequency: 60 # in seconds
@@ -120,22 +121,32 @@ application:
   fbi-engine:
     authentication:
       pki:
-        key-store: keystore.p12
+        key-store: classpath:ssl/keystore/flairbi-keystore.p12
         key-store-password: changeit
         key-password: changeit
-        trust-store: truststore.p12
+        trust-store: classpath:ssl/keystore/flairbi-truststore.p12
         trust-store-password: changeit
         enabled: false
       basic-authentication:
         enabled: false
         username: admin
         password: admin
+logging:
+  level:
+    org.hibernate.stat: DEBUG
 couchdb:
-  password: ${COUCH_PASS}
-  username: ${COUCH_USER}
-  url: ${COUCH_URI:http://flair-couchdb:5984}
+  password: ${COUCHDB_PASSWORD}
+  username: ${COUCHDB_USERNAME}
+  url: http://${COUCHDB_URI}
   test-connection-at-startup: false
   database-name: flairbi-view
+  ssl-factory: com.flair.bi.ssl.FlairBIPgSqlSSLSocketFactory
+  ssl-factory-arg: /app/ssl.properties
+  enable-s-s-l: false
+
+grpc:
+  tls:
+    root-certificate: src/main/resources/ssl/grpc/cloud/ca.crt
 
 # ===================================================================
 # vizualization-service-mode
@@ -160,6 +171,7 @@ MAX_TEXT_MESSAGE_SIZE: 2048000
 # ===================================================================
 
 flair-notifications:
+  url: ${FLAIR_NOTIFICATIONS}
   host: http://flair-notifications
   port: 8080
   username: admin
@@ -188,3 +200,6 @@ flair-notifications:
 storage-data-files: storage/data/files/
 
 data-file-max-size-mb: 10
+
+flair-engine:
+  url: ${FLAIR_ENGINE}

@@ -15,7 +15,7 @@
 
 spring:
   profiles:
-    active: dev
+    active: dep
     include: swagger
   devtools:
     restart:
@@ -26,10 +26,9 @@ spring:
     serialization.indent_output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    #    url: jdbc:postgresql://localhost:5432/fbiengine?ssl=true&sslfactory=com.fbi.engine.ssl.FBIEnginePgSQLSSLSocketFactory&sslfactoryarg=src/main/resources/config/ssl/ssl-dev.properties
-    url: jdbc:postgresql://localhost:5432/fbiengine?ssl=false
-    username: postgres
-    password: admin
+    url: jdbc:postgresql://${POSTGRES_URI}/flairengine?ssl=false
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
   jpa:
     database: POSTGRESQL
     show-sql: true
@@ -54,6 +53,7 @@ spring:
 
 liquibase:
   contexts: dev
+  drop-first: false
 
 # ===================================================================
 # To enable SSL, generate a certificate using:
@@ -151,3 +151,8 @@ application:
           roles:
           - "ROLE_ADMIN"
           - "ROLE_USER"
+
+flair-cache:
+  url: ${FLAIR_CACHE}
+  enabled: true
+  
