@@ -7,6 +7,9 @@ grpc:
 
 eureka:
     instance:
+        # appname: flair-engine-grpc
+        # virtualHostName: flair-engine-grpc
+        # instanceId: ${spring.cloud.client.hostname}:flair-engine-grpc:${spring.application.instance-id:${random.value}}
         nonSecurePort: ${grpc.port}
         securePort: ${grpc.port}
         securePortEnabled: true

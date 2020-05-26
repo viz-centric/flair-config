@@ -22,6 +22,8 @@ eureka:
     instance-info-replication-interval-seconds: 10
     registry-fetch-interval-seconds: 10
   instance:
+    # appname: flairengine
+    instanceId: ${spring.cloud.client.hostname}:flairengine:${spring.application.instance-id:${random.value}}
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 10
     status-page-url-path: ${management.endpoints.web.base-path}/info
@@ -204,16 +206,18 @@ jhipster:
 # https://jhipster.github.io/common-application-properties/
 # ==================================================================
 application:
-    database:
-        encryption:
-            passphrase: "top-secret"
-            salt: "799B148235B09A85"
-            key-length: 32
-    authentication:
-        flair-bi:
-            pki:
-                enabled: false
-            basic-authentication:
-                enabled: false
+  flair-cache:
+    enabled: false
+  database:
+    encryption:
+      key-length: 32
+      salt: "799B148235B09A85"
+      passphrase: "top-secret"
+  authentication:
+    flair-bi:
+      pki:
+        enabled: false
+      basic-authentication:
+        enabled: false
              
 
