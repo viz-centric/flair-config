@@ -41,9 +41,9 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/flairbi?ssl=false
-    username: postgres
-    password: admin
+    url: jdbc:postgresql://${POSTGRES_URI:localhost:5432}/flairbi?ssl=false
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASS}
     hikari:
       poolName: Hikari
       auto-commit: false
