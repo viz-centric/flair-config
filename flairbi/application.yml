@@ -119,6 +119,8 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
+      # needs to be migrated..
+      use-new-id-generator-mappings: false
       ddl-auto: none
       naming:
         physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
