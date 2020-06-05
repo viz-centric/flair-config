@@ -110,7 +110,7 @@ spring:
     hibernate:
       ddl-auto: validate
       # needs to be migrated
-      use-new-id-generator-mappings: false
+      use-new-id-generator-mappings: true
       naming:
         physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
