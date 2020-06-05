@@ -177,9 +177,9 @@ couchdb:
   url: http://localhost:5984
   test-connection-at-startup: false
   database-name: flairbi-view
-  ssl-factory: com.flair.bi.ssl.FlairBIPgSqlSSLSocketFactory
-  ssl-factory-arg: src/main/resources/config/ssl/ssl-dev.properties
-  enable-s-s-l: true
+  # ssl-factory: com.flair.bi.ssl.FlairBIPgSqlSSLSocketFactory
+  # ssl-factory-arg: src/main/resources/config/ssl/ssl-dev.properties
+  enable-s-s-l: false
 
 grpc:
   tls:
