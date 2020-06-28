@@ -9,31 +9,61 @@
 # Full reference is available at:
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
+logging:
+  level:
+    ROOT: ERROR
+    org.postgresql.jdbc: WARN
+    com.netflix.discovery: WARN
+    io.github.jhipster: DEBUG
+    com.flair.bi: DEBUG
+    javax.management: ERROR
+    com.hazelcast: ERROR
+  
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://admin:admin@localhost:8761/eureka/}
+
 spring:
   profiles:
     active: dev
     include: swagger
   devtools:
     restart:
-      enabled: false
+      enabled: true
+      additional-exclude: webapp/**
     livereload:
-      enabled: false # we use gulp + BrowserSync for livereload
+      enabled: false # we use Webpack dev server + BrowserSync for livereload
   jackson:
-    serialization.indent_output: true
+    serialization:
+      indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    #    url: jdbc:postgresql://localhost:5432/flairbi?ssl=true&sslfactory=com.flair.bi.ssl.FlairBIPgSqlSSLSocketFactory&sslfactoryarg=src/main/resources/config/ssl/ssl-dev.properties
-    url: jdbc:postgresql://localhost:5432/flairbi?ssl=false
-    username: postgres
-    password: admin
+    url: jdbc:postgresql://${POSTGRES_URI:localhost:5432}/flairbi?ssl=false
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASS:admin}
+    hikari:
+      poolName: Hikari
+      auto-commit: false
   jpa:
-    database-platform: com.flair.bi.domain.util.FixedPostgreSQL82Dialect
+    database-platform: io.github.jhipster.domain.util.FixedPostgreSQL10Dialect
     database: POSTGRESQL
     show-sql: true
     properties:
-      hibernate.cache.use_second_level_cache: false
+      hibernate.id.new_generator_mappings: true
+      hibernate.connection.provider_disables_autocommit: true
+      hibernate.cache.use_second_level_cache: true
       hibernate.cache.use_query_cache: false
-      hibernate.generate_statistics: true
+      hibernate.generate_statistics: false
+      hibernate.cache.region.factory_class: com.hazelcast.hibernate.HazelcastCacheRegionFactory
+      hibernate.cache.hazelcast.instance_name: flairbi
+      hibernate.cache.use_minimal_puts: true
+      hibernate.cache.hazelcast.use_lite_member: true
+  liquibase:
+    # Remove 'faker' if you do not want the sample data to be loaded automatically
+    contexts: dev, faker
 
   mail:
     host: localhost
@@ -41,12 +71,18 @@ spring:
     username:
     password:
   messages:
-    cache-seconds: 1
+    cache-duration: PT1S # 1 second, see the ISO 8601 standard
   thymeleaf:
     cache: false
-
-liquibase:
-  contexts: dev,
+  sleuth:
+    sampler:
+      probability: 1 # report 100% of traces
+  zipkin: # Use the "zipkin" Maven profile to have the Spring Cloud Zipkin dependencies
+    base-url: http://localhost:9411
+    enabled: false
+    locator:
+      discovery:
+        enabled: true
 
 server:
   port: 8002
@@ -71,77 +107,79 @@ security:
 # ===================================================================
 
 jhipster:
+  registry:
+    password: admin
+  cache: # Cache configuration
+    hazelcast: # Hazelcast distributed cache
+      time-to-live-seconds: 3600
+      backup-count: 1
+      management-center: # Full reference is available at: http://docs.hazelcast.org/docs/management-center/3.9/manual/html/Deploying_and_Starting.html
+        enabled: false
+        update-interval: 3
+        url: http://localhost:8180/mancenter
   security:
     authentication:
       jwt:
-        secret: my-secret-token-to-change-in-production
+        # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
+        base64-secret: MWYyNjhiY2QzMGEyN2M2MWNmNjA1ZDUyODU4Mjc5NDYyNzNmNmVkMzNjY2UyY2JmOTcxYzZiYzIzMWE5YWRkZmRmYjhmNmQxODg4OTlhZjMzNTY4NjA3ZTYzOTE5OTVmZDMzYmNjNDkwZDBmMDJiMDBjMjYwZTBkNTY3NTQyMjQ=
         # Token is valid 24 hours
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000
-    rememberMe:
-      # security key (this key should be unique for your application, and kept secret)
-      key: 81703cb4a1c3099ecc374a94c5c4efe0717e078b
   mail: # specific JHipster mail property, for standard properties see MailProperties
-    from: flairbi@localhost
-    baseUrl: http://127.0.0.1:80
-  metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
-    jmx.enabled: true
-    graphite:
+    base-url: http://127.0.0.1:8081
+  metrics:
+    logs: # Reports metrics in the logs
       enabled: false
-      host: localhost
-      port: 2003
-      prefix: flairbi
-    prometheus:
-      enabled: true
-      endpoint: /prometheus
-    logs: # Reports Dropwizard metrics in the logs
-      enabled: false
-      reportFrequency: 60 # in seconds
+      report-frequency: 60 # in seconds
   logging:
+    use-json-format: false # By default, logs are not in Json format
     logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration
       enabled: false
       host: localhost
       port: 5000
-      queueSize: 512
-
-  # ===================================================================
-  # Ldap connection properties
-  # ===================================================================
-  ldapsettings:
-    url: ldap://localhost:10389
-    base: dc=hawk,dc=com
-    userDn: uid=admin,ou=system
-    password: secret
+      queue-size: 512
+  audit-events:
+    retention-period: 30 # Number of days before audit events are deleted.
 
 # ===================================================================
 # Application specific properties
 # ===================================================================
+# ===================================================================
+# Ldap connection properties
+# ===================================================================
 application:
-  fbi-engine:
-    authentication:
-      pki:
-        key-store: classpath:ssl/keystore/flairbi-keystore.p12
-        key-store-password: changeit
-        key-password: changeit
-        trust-store: classpath:ssl/keystore/flairbi-truststore.p12
-        trust-store-password: changeit
-        enabled: false
-      basic-authentication:
-        enabled: false
-        username: admin
-        password: admin
-logging:
-  level:
-    org.hibernate.stat: DEBUG
+  ldap:
+    url: ldap://localhost:10389
+    base: dc=hawk,dc=com
+    userDn: uid=admin,ou=system
+    password: secret
+# ===================================================================
+# Images location
+# note : please append the slash('/') at the end of folder as below
+# for example : images then /
+# ===================================================================
+  imageUpload:
+    location: var/images/
+    maxSizeMb: 10
+# ===================================================================
+# files location
+# note : please append the slash('/') at the end of folder as below
+# for example : files then /
+# ===================================================================
+  storageUpload:
+    location: storage/data/files/
+    maxSizeMb: 10
+
+
 couchdb:
-  password: password
-  username: admin
-  url: http://localhost:5984
+  password: ${COUCHDB_PASS:password}
+  username: ${COUCHDB_USER:admin}
+  url: ${COUCHDB_URL:http://localhost:5984}
   test-connection-at-startup: false
   database-name: flairbi-view
-  ssl-factory: com.flair.bi.ssl.FlairBIPgSqlSSLSocketFactory
-  ssl-factory-arg: src/main/resources/config/ssl/ssl-dev.properties
-  enable-s-s-l: true
+  # ssl-factory: com.flair.bi.ssl.FlairBIPgSqlSSLSocketFactory
+  # ssl-factory-arg: src/main/resources/config/ssl/ssl-dev.properties
+  enable-s-s-l: false
 
 grpc:
   tls:
@@ -152,15 +190,6 @@ grpc:
 # ===================================================================
 
 vizualization-service-mode: grpc
-
-# ===================================================================
-# Images location
-# note : please append the slash('/') at the end of folder as below
-# for example : images then /
-# ===================================================================
-
-image-location: var/images/
-image-max-size-mb: 10
 
 #websocket message size
 MAX_TEXT_MESSAGE_SIZE: 2048000
@@ -174,27 +203,9 @@ flair-notifications:
   port: 8090
   username: admin
   password: admin
-  auth-url: /api-token-auth/
-  scheduled-report-url: /api/jobSchedule/
   mail_body: This is a test email to check api functionality
   slack_API_Token: xoxp-338558815156-339648235094-401148640099-d844d7552f5b0081546729d997e92f52
   channel_id: C9ZK2705U
   stride_API_Token: uEkHqU5s2tsF6H13zK3p
   stride_cloud_id: 13f8bfc9-8748-4008-8b11-71f22aa84126
   stride_conversation_id: ff15d817-3ab3-417d-8ba6-2490b330a35f
-  scheduled-reports-url: /api/user/{user}/reports?pageSize={pageSize}&page={page}
-  scheduled-reports-count-url: /api/user/{user}/reportCount/
-  scheduled-report-param-url: /api/jobSchedule/?visualizationid={visualizationid}
-  scheduled-execute-now-report-param-url: /api/executeImmediate/?visualizationid={visualizationid}
-  scheduled-report-logs-param-url: /api/jobLogs/?visualizationid={visualizationid}&pageSize={pageSize}&page={page}
-  scheduled-search-reports-param-url: /api/jobFilter/?userName={userName}&reportName={reportName}&startDate={startDate}&endDate={endDate}&pageSize={pageSize}&page={page}
-
-# ===================================================================
-# files location
-# note : please append the slash('/') at the end of folder as below
-# for example : files then /
-# ===================================================================
-
-storage-data-files: storage/data/files/
-
-data-file-max-size-mb: 10
