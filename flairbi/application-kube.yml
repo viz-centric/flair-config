@@ -26,7 +26,7 @@ spring:
     username: postgres
     password: admin
   jpa:
-    database-platform: io.github.jhipster.domain.util.FixedPostgreSQL82Dialect
+    database-platform: io.github.jhipster.domain.util.FixedPostgreSQL10Dialect
     database: POSTGRESQL
     show-sql: true
     properties:
