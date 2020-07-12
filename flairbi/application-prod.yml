@@ -23,7 +23,7 @@ spring:
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASS}
   jpa:
-    database-platform: com.flair.bi.domain.util.FixedPostgreSQL82Dialect
+    database-platform: io.github.jhipster.domain.util.FixedPostgreSQL10Dialect
     database: POSTGRESQL
     show-sql: false
     properties:
@@ -104,32 +104,33 @@ jhipster:
       port: 5000
       queueSize: 512
 
-  # ===================================================================
-  # Ldap connection properties
-  # ===================================================================
-  ldapsettings:
-    url: ldap://localhost:10389
-    base: dc=hawk,dc=com
-    userDn: uid=admin,ou=system
-    password: secret
-
 # ===================================================================
 # Application specific properties
 # ===================================================================
 application:
-  fbi-engine:
-    authentication:
-      pki:
-        key-store: keystore.p12
-        key-store-password: changeit
-        key-password: changeit
-        trust-store: truststore.p12
-        trust-store-password: changeit
-        enabled: false
-      basic-authentication:
-        enabled: false
-        username: admin
-        password: admin
+  ldap:
+    url: ldap://localhost:10389
+    base: dc=hawk,dc=com
+    userDn: uid=admin,ou=system
+    password: secret
+# ===================================================================
+# Images location
+# note : please append the slash('/') at the end of folder as below
+# for example : images then /
+# ===================================================================
+  image-upload:
+    location: var/images/
+    max-size-mb: 10
+# ===================================================================
+# files location
+# note : please append the slash('/') at the end of folder as below
+# for example : files then /
+# ===================================================================
+  storage-upload:
+    location: storage/data/files/
+    max-size-mb: 10
+
+
 couchdb:
   password: ${COUCH_PASS}
   username: ${COUCH_USER}
@@ -143,15 +144,6 @@ couchdb:
 
 vizualization-service-mode: grpc
 
-# ===================================================================
-# Images location
-# note : please append the slash('/') at the end of folder as below
-# for example : images then /
-# ===================================================================
-
-image-location: var/images/
-image-max-size-mb: 10
-
 #websocket message size
 MAX_TEXT_MESSAGE_SIZE: 2048000
 
@@ -164,27 +156,9 @@ flair-notifications:
   port: 8080
   username: admin
   password: admin
-  auth-url: /api-token-auth/
-  scheduled-report-url: /api/jobSchedule/
   mail_body: This is a test email to check api functionality
   slack_API_Token: xoxp-338558815156-339648235094-401148640099-d844d7552f5b0081546729d997e92f52
   channel_id: C9ZK2705U
   stride_API_Token: uEkHqU5s2tsF6H13zK3p
   stride_cloud_id: 13f8bfc9-8748-4008-8b11-71f22aa84126
   stride_conversation_id: ff15d817-3ab3-417d-8ba6-2490b330a35f
-  scheduled-reports-url: /api/user/{user}/reports?pageSize={pageSize}&page={page}
-  scheduled-reports-count-url: /api/user/{user}/reportCount/
-  scheduled-report-param-url: /api/jobSchedule/?visualizationid={visualizationid}
-  scheduled-execute-now-report-param-url: /api/executeImmediate/?visualizationid={visualizationid}
-  scheduled-report-logs-param-url: /api/jobLogs/?visualizationid={visualizationid}&pageSize={pageSize}&page={page}
-  scheduled-search-reports-param-url: /api/jobFilter/?userName={userName}&reportName={reportName}&startDate={startDate}&endDate={endDate}&pageSize={pageSize}&page={page}
-
-# ===================================================================
-# files location
-# note : please append the slash('/') at the end of folder as below
-# for example : files then /
-# ===================================================================
-
-storage-data-files: storage/data/files/
-
-data-file-max-size-mb: 10

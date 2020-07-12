@@ -1,8 +1,10 @@
 # ===================================================================
 # Spring Boot configuration.
 #
-# This configuration will be overriden by the Spring profile you use,
-# for example application-dev.yml if you use the "dev" profile.
+# This configuration is used for unit/integration tests.
+#
+# More information on profiles: https://www.jhipster.tech/profiles/
+# More information on configuration properties: https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
 # ===================================================================
@@ -10,23 +12,46 @@
 # Full reference is available at:
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
+eureka:
+  client:
+    enabled: true
+    healthcheck:
+      enabled: true
+    fetch-registry: true
+    register-with-eureka: true
+    instance-info-replication-interval-seconds: 10
+    registry-fetch-interval-seconds: 10
+  instance:
+    appname: flairbi
+    instanceId: ${spring.cloud.client.hostname}:flairbi:${spring.application.instance-id:${random.value}}
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+    status-page-url-path: ${management.endpoints.web.base-path}/info
+    health-check-url-path: ${management.endpoints.web.base-path}/health
+    metadata-map:
+      zone: primary # This is needed for the load balancer
+      profile: ${spring.profiles.active}
+      version: #project.version#
+      git-version: ${git.commit.id.describe:}
+      git-commit: ${git.commit.id.abbrev:}
+      git-branch: ${git.branch:}
+ribbon:
+  eureka:
+    enabled: true
+feign:
+  hystrix:
+    enabled: true
+# See https://github.com/Netflix/Hystrix/wiki/Configuration
 hystrix:
   command:
     default:
       execution:
         isolation:
-          thread:
-            timeoutInMilliseconds: 20000
-
-ribbon:
-  ReadTimeout: 20000
-  ConnectTimeout: 20000
-
-zuul:
-  ignoredPatterns: /api/**
-  routes:
-    fbiengine:
-      path: /fbiengine/**
+          strategy: SEMAPHORE
+          # See https://github.com/spring-cloud/spring-cloud-netflix/issues/1330
+          # thread:
+          #     timeoutInMilliseconds: 10000
+  shareSecurityContext: true
 
 grpc:
   server:
@@ -34,13 +59,56 @@ grpc:
 
 
 management:
-  context-path: /
+  endpoints:
+    web:
+      base-path: /management
+      exposure:
+        include: ['configprops', 'env', 'health', 'info', 'jhimetrics', 'logfile', 'loggers', 'prometheus', 'threaddump']
+  endpoint:
+    health:
+      show-details: when-authorized
+      roles: 'ROLE_ADMIN'
+    jhimetrics:
+      enabled: true
+  info:
+    git:
+      mode: full
   health:
+    ldap:
+      enabled: false # When using LDAP, set this to true
     mail:
       enabled: false # When using the MailService, configure an SMTP server and set this to true
+  metrics:
+    export:
+      # Prometheus is the default metrics backend
+      prometheus:
+        enabled: true
+        step: 60
+    enable:
+      http: true
+      jvm: true
+      logback: true
+      process: true
+      system: true
+    distribution:
+      percentiles-histogram:
+        all: true
+      percentiles:
+        all: 0, 0.5, 0.75, 0.95, 0.99, 1.0
+    tags:
+      application: flairbi
+    web:
+      server:
+        auto-time-requests: true
 spring:
+  jmx:
+    enabled: false
   application:
     name: flairbi
+  data:
+    jpa:
+      repositories:
+        bootstrap-mode: deferred
   profiles:
     # The commented value for `active` can be replaced with valid Spring profiles to load.
     # Otherwise, it will be filled in by maven when building the WAR file
@@ -51,32 +119,48 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
+      # needs to be migrated..
+      use-new-id-generator-mappings: false
       ddl-auto: none
       naming:
         physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
   messages:
     basename: i18n/messages
-  mvc:
-    favicon:
-      enabled: false
+  task:
+    execution:
+      thread-name-prefix: flairbi-task-
+      pool:
+        core-size: 2
+        max-size: 50
+        queue-capacity: 10000
+    scheduling:
+      thread-name-prefix: flairbi-scheduling-
+      pool:
+        size: 2
   thymeleaf:
-    mode: XHTML
-
-security:
-  basic:
-    enabled: false
+    mode: HTML
+  output:
+    ansi:
+      console-available: true
 
 server:
-  session:
-    cookie:
-      http-only: true
+  servlet:
+    session:
+      cookie:
+        http-only: true
+# Properties to be exposed on the /info management endpoint
+info:
+  # Comma separated list of profiles that will trigger the ribbon to show
+  display-ribbon-on-profiles: 'dev'
 
 # ===================================================================
 # JHipster specific properties
 # ===================================================================
 
 jhipster:
+  clientApp:
+    name: 'flairbi'
   async:
     corePoolSize: 2
     maxPoolSize: 50
@@ -88,18 +172,46 @@ jhipster:
     exposed-headers:
     allow-credentials: true
     max-age: 1800
-  mail:
-    from: flairbi@localhost
-  swagger:
-    title: flairbi API
-    description: flairbi API documentation
-    version: 0.0.1
-    termsOfServiceUrl:
-    contactName:
-    contactUrl:
-    contactEmail:
-    license:
-    licenseUrl:
-  ribbon:
-    # comma separated list of profiles to show a ribbon on the GUI
-    displayOnActiveProfiles: dev
+  logging:
+    # To test json console appender
+    use-json-format: true # By default, logs are in Json format
+    logstash:
+      enabled: false
+      host: localhost
+      port: 5000
+      queue-size: 512
+  security:
+    authentication:
+      jwt:
+        # This token must be encoded using Base64 (you can type `echo 'secret-key'|base64` on your command line)
+        base64-secret: MWYyNjhiY2QzMGEyN2M2MWNmNjA1ZDUyODU4Mjc5NDYyNzNmNmVkMzNjY2UyY2JmOTcxYzZiYzIzMWE5YWRkZmRmYjhmNmQxODg4OTlhZjMzNTY4NjA3ZTYzOTE5OTVmZDMzYmNjNDkwZDBmMDJiMDBjMjYwZTBkNTY3NTQyMjQ=
+        # Token is valid 24 hours
+        token-validity-in-seconds: 86400
+  metrics:
+    logs: # Reports metrics in the logs
+      enabled: true
+      report-frequency: 60 # in seconds
+  # Specific configuration for JHipster gateways
+  # See https://www.jhipster.tech/api-gateway/ for more information on JHipster gateways
+  gateway:
+      # rate-limiting:
+      #     enabled: false # Rate limiting is disabled by default
+      #     limit: 100_000L # By default we allow 100,000 API calls
+      #     duration-in-seconds: 3_600 # By default the rate limiting is reinitialized every hour
+      authorized-microservices-endpoints: # Access Control Policy, if left empty for a route, all endpoints will be accessible
+          fbiengine: /api # recommended prod configuration, it allows the access to all API calls from the "app1" microservice
+      
+# ===================================================================
+# Application scheduler configuration
+# ===================================================================
+flair-notifications:
+  auth-url: /api-token-auth/
+  scheduled-report-url: /api/jobSchedule/
+  scheduled-reports-url: /api/user/{user}/reports?pageSize={pageSize}&page={page}
+  scheduled-reports-count-url: /api/user/{user}/reportCount/
+  scheduled-report-param-url: /api/jobSchedule/?visualizationid={visualizationid}
+  scheduled-execute-now-report-param-url: /api/executeImmediate/?visualizationid={visualizationid}
+  scheduled-report-logs-param-url: /api/jobLogs/?visualizationid={visualizationid}&pageSize={pageSize}&page={page}
+  scheduled-search-reports-param-url: /api/jobFilter/?userName={userName}&reportName={reportName}&startDate={startDate}&endDate={endDate}&pageSize={pageSize}&page={page}
+
+
