@@ -20,3 +20,7 @@ mailService:
   auth :
     user: <key name>
     pass: <password>
+grpc:
+  auth:
+    username: flair-notifications
+    jwtKey: secretKey1secretKey1secretKey1secretKey1secretKey1secretKey1secretKey1
