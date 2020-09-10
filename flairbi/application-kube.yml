@@ -40,13 +40,13 @@ spring:
     username:
     password:
   messages:
-    cache-seconds: 1
+    cache-duration: 1
   thymeleaf:
     cache: false
 
-liquibase:
-  contexts: dev,
-  drop-first: false
+  liquibase:
+    contexts: dev,
+    drop-first: false
 
 server:
   port: 8002
