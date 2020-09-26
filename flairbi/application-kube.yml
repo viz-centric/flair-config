@@ -132,7 +132,7 @@ application:
         password: admin
 logging:
   level:
-    org.hibernate.stat: DEBUG
+    org.hibernate.stat: INFO
 couchdb:
   password: password
   username: admin
