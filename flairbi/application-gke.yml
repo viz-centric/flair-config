@@ -149,6 +149,10 @@ grpc:
   tls:
     root-certificate: src/main/resources/ssl/grpc/cloud/ca.crt
 
+logging:
+  level:
+    org.springframework.web.socket.server.support.DefaultHandshakeHandler: TRACE
+
 # ===================================================================
 # vizualization-service-mode
 # ===================================================================
