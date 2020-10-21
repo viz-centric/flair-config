@@ -124,7 +124,7 @@ application:
 # for example : images then /
 # ===================================================================
   imageUpload:
-    location: var/images/
+    location: ${IMAGE_UPLOAD_DIR:var/images/}
     maxSizeMb: 10
 # ===================================================================
 # files location
@@ -132,7 +132,7 @@ application:
 # for example : files then /
 # ===================================================================
   storage-upload:
-    location: storage/data/files/
+    location: ${STORAGE_UPLOAD_DIR:storage/data/files/}
     max-size-mb: 10
 
 couchdb:

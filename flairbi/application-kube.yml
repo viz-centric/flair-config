@@ -159,7 +159,7 @@ vizualization-service-mode: grpc
 # for example : images then /
 # ===================================================================
 
-image-location: var/images/
+image-location: ${IMAGE_UPLOAD_DIR:var/images/}
 image-max-size-mb: 10
 
 #websocket message size
@@ -195,6 +195,6 @@ flair-notifications:
 # for example : files then /
 # ===================================================================
 
-storage-data-files: storage/data/files/
+storage-data-files: ${STORAGE_UPLOAD_DIR:storage/data/files/}
 
 data-file-max-size-mb: 10
