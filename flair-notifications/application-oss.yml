@@ -24,3 +24,6 @@ grpc:
   auth:
     username: flair-notifications
     jwtKey: secretKey1secretKey1secretKey1secretKey1secretKey1secretKey1secretKey1
+auth:
+  username: flair-notifications
+  jwtKey: secretKey1secretKey1secretKey1secretKey1secretKey1secretKey1secretKey1
