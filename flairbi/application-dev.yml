@@ -120,7 +120,7 @@ jhipster:
   security:
     authentication:
       jwt:
-        secret: my-secret-token-to-change-in-production
+        secret: secretKey1secretKey1secretKey1secretKey1secretKey1secretKey1secretKey1
   mail: # specific JHipster mail property, for standard properties see MailProperties
     base-url: http://127.0.0.1:8081
   metrics:

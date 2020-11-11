@@ -183,7 +183,7 @@ jhipster:
   security:
     authentication:
       jwt:
-        secret: my-secret-token-to-change-in-production
+        secret: secretKey1secretKey1secretKey1secretKey1secretKey1secretKey1secretKey1
   metrics:
     logs: # Reports metrics in the logs
       enabled: true

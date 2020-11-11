@@ -74,7 +74,7 @@ jhipster:
   security:
     authentication:
       jwt:
-        secret: my-secret-token-to-change-in-production
+        secret: secretKey1secretKey1secretKey1secretKey1secretKey1secretKey1secretKey1
     rememberMe:
       # security key (this key should be unique for your application, and kept secret)
       key: 81703cb4a1c3099ecc374a94c5c4efe0717e078b
